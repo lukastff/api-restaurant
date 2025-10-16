@@ -51,6 +51,15 @@ class ProductController {
                 price: z.number().gt(0),
             });
 
+            const product = await knex<ProductRepository>("products")
+                .select()
+                .where({ id })
+                .first();
+
+            if (!product) {
+                throw new AppError("Product not exists!");
+            }
+
             const { name, price } = bodySchema.parse(req.body);
 
             await knex<ProductRepository>("products")
