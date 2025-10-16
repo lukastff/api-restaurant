@@ -7,5 +7,12 @@
   },
   "author": "Lucas Tavares",
   "license": "ISC",
-  "description": "API para gerenciar pedidos das mesas de um restaurant"
+  "description": "API para gerenciar pedidos das mesas de um restaurant",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "typescript": "^5.5.4"
+  }
 }
