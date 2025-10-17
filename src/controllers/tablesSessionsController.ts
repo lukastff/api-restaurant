@@ -56,6 +56,26 @@ class TablesSessionsController {
                 })
                 .parse(req.params.id);
 
+            const session = await knex<TablesSessionsRepository>(
+                "tables_sessions"
+            )
+                .where({ id })
+                .first();
+
+            if (!session) {
+                throw new AppError("Session table not found!");
+            }
+
+            if (session.closed_at) {
+                throw new AppError("This table has been closed!");
+            }
+
+            await knex<TablesSessionsRepository>("tables_sessions")
+                .update({
+                    closed_at: knex.fn.now(),
+                })
+                .where({ id });
+
             return res.json();
         } catch (error) {
             return next(error);
