@@ -77,6 +77,27 @@ class OrdersController {
             return next(error);
         }
     }
+
+    async show(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { tables_sessions_id } = req.params;
+
+            const order = await knex("orders")
+                .select(
+                    // COALESCE = Se o valor for nulo, retorna o segundo parâmetro.
+                    knex.raw(
+                        "COALESCE(SUM(orders.price * orders.quantity), 0) AS total"
+                    ),
+                    knex.raw("COALESCE(SUM(orders.quantity), 0) AS quantity")
+                )
+                .where({ tables_sessions_id })
+                .first();
+
+            return res.json(order);
+        } catch (error) {
+            return next(error);
+        }
+    }
 }
 
 export { OrdersController };
