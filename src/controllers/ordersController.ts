@@ -16,11 +16,11 @@ class OrdersController {
         try {
             const bodySchema = z.object({
                 tables_sessions_id: z.number(),
-                products_id: z.number(),
+                product_id: z.number(),
                 quantity: z.number(),
             });
 
-            const { tables_sessions_id, products_id, quantity } =
+            const { tables_sessions_id, product_id, quantity } =
                 bodySchema.parse(req.body);
 
             const sessions = await knex<TablesSessionsRepository>(
@@ -39,13 +39,20 @@ class OrdersController {
 
             const product = await knex<ProductRepository>("products")
                 .where({
-                    id: products_id,
+                    id: product_id,
                 })
                 .first();
 
             if (!product) {
                 throw new AppError("Product not found");
             }
+
+            await knex<OrdersRepository>("orders").insert({
+                tables_sessions_id,
+                product_id,
+                quantity,
+                price: product.price,
+            });
 
             return res.json();
         } catch (error) {
