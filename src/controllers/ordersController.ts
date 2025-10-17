@@ -6,7 +6,21 @@ import { z } from "zod";
 class OrdersController {
     async index(req: Request, res: Response, next: NextFunction) {
         try {
-            return res.json();
+            const { tables_sessions_id } = req.params;
+
+            const order = await knex("orders")
+                .select(
+                    "orders.id",
+                    "orders.tables_sessions_id",
+                    "orders.product_id",
+                    "products.name",
+                    "orders.price",
+                    "orders.quantity"
+                )
+                .join("products", "products.id", "orders.product_id")
+                .where({ tables_sessions_id });
+
+            return res.json(order);
         } catch (error) {
             return next(error);
         }
