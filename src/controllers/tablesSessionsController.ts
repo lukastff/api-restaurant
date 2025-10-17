@@ -2,11 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import { knex } from "@/database/knex";
 import { z } from "zod";
 import { AppError } from "@/utils/AppError";
+import { close } from "fs";
 
 class TablesSessionsController {
     async index(req: Request, res: Response, next: NextFunction) {
         try {
-            return res.json();
+            const sessions = await knex<TablesSessionsRepository>(
+                "tables_sessions"
+            ).orderBy("closed_at");
+            return res.json(sessions);
         } catch (error) {
             return next(error);
         }
