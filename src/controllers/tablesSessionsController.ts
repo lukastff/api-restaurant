@@ -48,6 +48,14 @@ class TablesSessionsController {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
+            const id = z
+                .string()
+                .transform((value) => Number(value))
+                .refine((value) => !isNaN(value), {
+                    message: "ID must be a number!",
+                })
+                .parse(req.params.id);
+
             return res.json();
         } catch (error) {
             return next(error);
